@@ -1,11 +1,25 @@
 var urlLogin = "http://localhost:5500/login";
 var urlRegister = "http://localhost:5500/signUp"
 var urlCreateProfile = "http://localhost:5500/createProfile"
+var urlLogout = "http://localhost:5500/logout"
 var authToken;
 var email, pass, fName, lName, edu, skills, desc, contact, links, pic, docs, name;
 var verifyFlag;
 
 //LOGIN
+function onLoad() {
+    document.getElementById("in_login_pass")
+        .addEventListener("keyup", function(event) {
+        event.preventDefault();
+        if (event.keyCode == 13) {
+            document.getElementById("btn_modal_login").click();
+        }
+    });
+}
+
+function report() {
+    
+}
 
 function btn_login() {
     var _email = in_login_email.value;
@@ -44,7 +58,7 @@ function btn_login() {
                     alert("Error: No internet connection!");
 			    	console.log(err.message + ": No Internet Connection");
 		    });
-            //window.location.href = 'profile.html';
+            window.location.href = 'profile.html';
 }
 
 
@@ -123,7 +137,7 @@ function btn_register_finish() {
         localStorage.setItem('skills', skills);
 
         window.location.href = "profile.html";
-        
+
         fetch(urlCreateProfile, {
 			method: "POST",
 			headers: {
@@ -162,7 +176,7 @@ function btn_register_finish() {
 
 		    	console.log(err.message + ": No Internet Connection");
 		    }.bind(this));
-                
+
 
 }
 
@@ -203,6 +217,38 @@ function verifyLName(_lName) {
     }
     document.getElementById("lNameError").style.display = 'none';
     return true;
+}
+
+function btn_logout() {
+    fetch(urlLogout, {
+                method: "POST",
+                headers: {
+                    'Accept': 'application/json',
+                    'content-type': 'application/json'
+                },
+                body: JSON.stringify({
+                    "email":email,
+                    "signOut":true
+                })
+
+            }).then(function(res) {
+                console.log("Inside res function");
+                if (res.ok) {
+                    res.json().then(function(data) {
+                        alert("Logout successful!");
+                        //alert(this.authToken);
+                    }.bind(this));
+                }
+                else {
+                    alert("Error: Logout unsuccessful!");
+                    res.json().then(function(data) {
+                    console.log(data.message);
+                    }.bind(this));
+                }
+            }).catch(function(err) {
+                alert("Error: No connection to server!");
+                console.log(err.message + ": No Internet Connection");
+        });
 }
 
 
